@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset=utf-8>
+	<title>Remaining Students</title>
+	<script type="text/javascript" src="d3/d3.v3.js">
+	</script>
+	<style type="text/css">
+		body {
+		  font: 10px sans-serif;
+		}
+
+		.arc path {
+		  stroke: #fff;
+		}
+
+	</style>
+</head>
+<body>
+
+
+	<script type="text/javascript">
+/*
+CC BYSA 2014
+Robert Starmer
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 United States License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/us/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
+Built with plenty of help from Scott Murray. “Interactive Data Visualization for the Web.”
+
+and further based on: http://bl.ocks.org/mbostock/3887193
+*/
+		var max_students = 5;
+		var dataset = [1,max_students-1]
+		var width=960;
+		var height=500;
+		var radius = Math.min(width,height)/2 ;
+		var color = d3.scale.ordinal()
+			//.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+			.range(["#44dd00", "#FF4400"]);
+
+		var arc = d3.svg.arc()
+			.outerRadius(radius-10)
+			.innerRadius(radius-70);
+
+		var pie = d3.layout.pie()
+			.sort(null)
+			.value(function(d) {return d})
+			.startAngle(-Math.PI/2)
+			.endAngle(Math.PI/2);
+
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height)
+					.append("g")
+    				.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    	var g = svg.selectAll(".arc")
+    				.data(pie(dataset))
+    				.enter()
+    				.append("g")
+    				.attr("class","arc");
+
+    	g.append("path")
+    		.attr("d",arc)
+    		.style("fill", function(d,i) {return color(i);});
+
+    	g.append("text")
+    		.attr("transform",function(d) { return "translate(" + arc.centroid(d) + ")"; })
+    		.attr("dy", ".35em")
+    		.style("text-anchor","middle")
+    		.text(function(d,i) { return dataset[i]; });
+
+    	d3.select("g").on("click",function() {
+    		if (dataset[0] > max_students-1 ) {
+    			dataset=[1,max_students-1]
+    		} else {
+  		  		dataset = [dataset[0]+1,dataset[1]-1];		
+    		}
+    		d3.selectAll("path")
+    			.data(pie(dataset))
+    			.transition()
+    			.attr("d",arc)
+    			.style("fill", function(d,i) {return color(i);});
+    		d3.selectAll("text")
+    			.data(pie(dataset))
+    			.transition()
+    			.attr("transform",function(d) { return "translate(" + arc.centroid(d) + ")"; })
+    			.attr("dy", ".35em")
+    			.style("text-anchor","middle")
+    			.text(function(d,i) { return dataset[i]; });
+
+    	})
+
+	</script>
+<footer>
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" property="dct:title" rel="dct:type">Student Tracker</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Robert Starmer</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/rstarmer/student_tracker.git" rel="dct:source">https://github.com/rstarmer/student_tracker.git</a>.</footer>
+</body>
+</html>
